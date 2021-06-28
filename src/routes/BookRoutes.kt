@@ -2,6 +2,7 @@ package com.thedarksideofcode.routes
 
 import com.thedarksideofcode.models.Book
 import com.thedarksideofcode.models.Chapter
+import com.thedarksideofcode.models.Rate
 import com.thedarksideofcode.service.BookService
 import io.ktor.application.*
 import io.ktor.http.*
@@ -13,7 +14,7 @@ import org.kodein.di.ktor.di
 
 fun Route.bookRouting() {
     val bookService by di().instance<BookService>()
-    route("/book") {
+    route("/book/") {
         get("{bookTitle}") {
             val bookTitle: String = call.parameters["bookTitle"] ?: return@get call.respond(HttpStatusCode.BadRequest)
             val book: Book = bookService.getBookByTitle(bookTitle) ?: return@get call.respondText(
@@ -43,6 +44,22 @@ fun Route.bookRouting() {
             bookService.deleteBookByTitle(bookTitle)
             call.respond(HttpStatusCode.Accepted)
         }
+
+        post("rate/{bookTitle}") {
+            val bookTitle: String =
+                call.parameters["bookTitle"] ?: return@post call.respond(HttpStatusCode.BadRequest)
+            val rate = call.receive<Rate>()
+            bookService.setBookRating(bookTitle, rate)
+            call.respond(HttpStatusCode.Accepted)
+        }
+        delete("rate/{bookTitle/{userId}") {
+            val bookTitle: String =
+                call.parameters["bookTitle"] ?: return@delete call.respond(HttpStatusCode.BadRequest)
+            val userId: String = call.parameters["userId"] ?: return@delete call.respond(HttpStatusCode.BadRequest)
+            bookService.deleteBookRating(bookTitle, userId)
+            call.respond(HttpStatusCode.Accepted)
+        }
+
     }
 }
 
@@ -76,10 +93,3 @@ fun Route.chapterRouting() {
     }
 }
 
-//TODO("Add version from Env var")
-fun Route.apiBookRoute() {
-    route("/api/v1/") {
-        bookRouting()
-        chapterRouting()
-    }
-}
