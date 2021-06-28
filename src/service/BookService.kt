@@ -3,6 +3,7 @@ package com.thedarksideofcode.service
 import com.thedarksideofcode.DB
 import com.thedarksideofcode.models.Book
 import com.thedarksideofcode.models.Chapter
+import com.thedarksideofcode.models.Rate
 import org.litote.kmongo.*
 
 class BookService {
@@ -34,6 +35,14 @@ class BookService {
 
     suspend fun deleteChapterByTitle(bookTitle: String, chapterName: String){
         DB.bookCollection.updateOne(Book::title eq bookTitle, pullByFilter(Book::chapterList, Chapter::title eq chapterName))
+    }
+
+    suspend fun setBookRating(bookTitle:String, rate: Rate){
+        DB.bookCollection.updateOne(Book::title eq bookTitle, push(Book::rateList,rate))
+    }
+
+    suspend fun deleteBookRating(bookTitle: String,userId:String){
+        DB.bookCollection.updateOne(Book::title eq bookTitle, pullByFilter(Book::rateList,Rate::idRater eq userId))
     }
 
 }
