@@ -10,12 +10,14 @@ fun Route.bookRoute() {
     route("/api/v1/") {
         bookRouting()
         chapterRouting()
+        catalogueRouting()
     }
 }
 
 fun Route.adminRoute(){
     route("/api/v1/admin/") {
         classificationRouting()
+        userRouting()
     }
 }
 
