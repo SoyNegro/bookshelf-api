@@ -102,6 +102,7 @@ class DB {
         private val database = client.getDatabase("bookshelf")
         val bookCollection = database.getCollection<Book>()
         val classificationCollection = database.getCollection<Classification>()
+        val userCollection = database.getCollection<User>()
 
     }
 }
